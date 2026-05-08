@@ -118,7 +118,7 @@ if (process.env.FRONTEND_URL && process.env.CRON_SECRET) {
   const url =
     `${process.env.FRONTEND_URL}/api/pumpizzab/trigger-alert?secret=${process.env.CRON_SECRET}`
 
-  const res = await fetch(url, { method: "POST" })
+  const res = await fetch(url, { method: "GET" })
   console.log("[alert-trigger]", res.status, await res.text())
 }
 
