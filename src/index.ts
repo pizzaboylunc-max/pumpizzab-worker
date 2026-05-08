@@ -44,6 +44,7 @@ function parseSwap(tx: any) {
   const side = getAttr(trade, "action")
   const pairAddress = getAttr(trade, "_contract_address")
   const trader = getAttr(trade, "buyer") || getAttr(trade, "seller")
+
   const amountInRaw = Number(getAttr(trade, "amount_in") || 0)
   const amountOutRaw = Number(getAttr(trade, "amount_out") || 0)
 
@@ -112,24 +113,29 @@ async function processTx(txHash: string) {
     create: parsed
   })
 
-  console.log("[saved]", parsed.side, parsed.symbol, parsed.txHash)
+  console.log(
+    "[saved]",
+    parsed.side,
+    parsed.symbol,
+    parsed.txHash
+  )
 
-if (process.env.FRONTEND_URL && process.env.CRON_SECRET) {
-  const url =
-    `${process.env.FRONTEND_URL}/api/pumpizzab/trigger-alert?secret=${process.env.CRON_SECRET}`
+  if (process.env.FRONTEND_URL && process.env.CRON_SECRET) {
+    try {
+      const url =
+        `${process.env.FRONTEND_URL}/api/pumpizzab/trigger-alert?secret=${process.env.CRON_SECRET}`
 
-  const res = await fetch(url, { method: "GET" })
-  console.log("[alert-trigger]", res.status, await res.text())
-}
+      const res = await fetch(url)
 
-  await fetch(
-  `${process.env.FRONTEND_URL}/api/pumpizzab/trigger-alert?secret=${process.env.CRON_SECRET}`,
-  {
-    method: "POST",
+      console.log(
+        "[alert-trigger]",
+        res.status,
+        await res.text()
+      )
+    } catch (err) {
+      console.error("[broadcast-error]", err)
+    }
   }
-).catch((err) => {
-  console.error("[broadcast-error]", err)
-})
 }
 
 function start() {
