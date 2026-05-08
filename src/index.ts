@@ -112,6 +112,16 @@ async function processTx(txHash: string) {
     create: parsed
   })
 
+  console.log("[saved]", parsed.side, parsed.symbol, parsed.txHash)
+
+if (process.env.FRONTEND_URL && process.env.CRON_SECRET) {
+  const url =
+    `${process.env.FRONTEND_URL}/api/pumpizzab/trigger-alert?secret=${process.env.CRON_SECRET}`
+
+  const res = await fetch(url, { method: "POST" })
+  console.log("[alert-trigger]", res.status, await res.text())
+}
+
   await fetch(
   `${process.env.FRONTEND_URL}/api/pumpizzab/trigger-alert?secret=${process.env.CRON_SECRET}`,
   {
