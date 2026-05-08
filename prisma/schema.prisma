@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["telegram_bot"]
+}
+
+model SwapEvent {
+  id          String   @id @default(cuid())
+  txHash      String   @unique
+  token       String
+  symbol      String
+  trader      String
+  side        String
+  amountToken Float    @default(0)
+  amountBase  Float    @default(0)
+  amountUsd   Float    @default(0)
+  priceUsd    Float    @default(0)
+  priceBase   Float    @default(0)
+  pairAddress String?
+  createdAt   DateTime @default(now())
+
+  @@index([token, createdAt])
+  @@index([trader])
+  @@map("swap_events")
+  @@schema("telegram_bot")
+}
+
+model PumpToken {
+  token           String   @id
+  symbol          String?
+  name            String?
+  launchContract  String?
+  curveContract   String?
+  terraportPair   String?
+  graduated       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([curveContract])
+  @@index([terraportPair])
+  @@map("pump_tokens")
+  @@schema("telegram_bot")
+}
